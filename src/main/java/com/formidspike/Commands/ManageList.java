@@ -46,7 +46,7 @@ public class ManageList implements CommandExecutor {
                         Player player = Bukkit.getPlayer(args[1]);
                         Material material = Material.matchMaterial(args[2]);
                         if (material == null) {sender.sendMessage(c("Invalid material: " + args[2])); return true;}
-                        MaterialStorangeClass mat =  plugin.getmaterialStore().get(player.getUniqueId().toString());
+                        MaterialStorangeClass mat = plugin.getmaterialStore().get(player.getUniqueId().toString());
                         if (mat == null){mat = new MaterialStorangeClass();}
                         mat.addMaterial(material);
                         mat.setPLayer(player);
@@ -59,7 +59,7 @@ public class ManageList implements CommandExecutor {
                 case "get":
                     try {
                         Player player = Bukkit.getPlayer(args[1]);
-                        List<Material> mat = plugin.getmaterialStore().get(player.getUniqueId().toString()).getMaterials();
+                        List<Material> mat = getMaterialList(plugin.getmaterialStore().get(player.getUniqueId().toString()));
                         sender.sendMessage("Materialas on " + player.getName() + "'s list");
                         for(Material m:mat){
                             sender.sendMessage(c("   " + m.name()));
@@ -90,6 +90,10 @@ public class ManageList implements CommandExecutor {
             }
         }
         return false;
+    }
+
+    private static List<Material> getMaterialList(MaterialStorangeClass materialStorangeClass){
+        return materialStorangeClass.getMaterials();
     }
     public Component c(String message){
         return Component.text(message);
