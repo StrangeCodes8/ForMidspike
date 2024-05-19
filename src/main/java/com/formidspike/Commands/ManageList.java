@@ -1,7 +1,6 @@
 package com.formidspike.Commands;
 
-import com.formidspike.Classes.MaterialStorangeClass;
-import com.formidspike.ForMidspike;
+import com.formidspike.Classes.PlayerMaterialClass;
 import com.google.common.collect.ImmutableList;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
@@ -43,19 +42,9 @@ public class ManageList implements CommandExecutor {
                         if (args.length == 3) {
                             Player player = Bukkit.getPlayer(args[1]);
                             if (player != null) {
-                                Material material = Material.matchMaterial(args[2]);
-                                if (material == null) {
-                                    sender.sendMessage(c("Invalid material: " + args[2]));
-                                    return true;
+                                if(PlayerMaterialClass.addMaterial(player.getUniqueId(),args[2])){
+                                    sender.sendMessage(c(args[2].replace("minecraft:","").toUpperCase() + " has been added to " + player.getName() + "'s list"));
                                 }
-                                MaterialStorangeClass mat = ForMidspike.getmaterialStore().get(player.getUniqueId().toString());
-                                if (mat == null) {
-                                    mat = new MaterialStorangeClass();
-                                }
-                                mat.addMaterial(material);
-                                mat.setPLayer(player);
-                                ForMidspike.getmaterialStore().put(player.getUniqueId().toString(), mat);
-                                sender.sendMessage(c(material.name() + " has been added to " + player.getName() + "'s list"));
                             }
                         } else {return false;}
                     } catch (RuntimeException e){
@@ -68,12 +57,12 @@ public class ManageList implements CommandExecutor {
                         if (args.length == 2) {
                             Player player = Bukkit.getPlayer(args[1]);
                             if (player != null) {
-                                MaterialStorangeClass mat = ForMidspike.getmaterialStore().get(player.getUniqueId().toString());
-                                if (mat == null) {
+                                List<Material> materialList = PlayerMaterialClass.getMaterials(player.getUniqueId());
+                                if (materialList == null || materialList.isEmpty()) {
                                     sender.sendMessage(c("There is no materials list for " + player.getName()));
                                 } else {
                                     sender.sendMessage(c("Materialas on " + player.getName() + "'s list"));
-                                    for (Material m : mat.getMaterials()) {
+                                    for (Material m : materialList) {
                                         sender.sendMessage(c("   " + m.name()));
                                     }
                                 }
@@ -88,18 +77,8 @@ public class ManageList implements CommandExecutor {
                         if (args.length == 3) {
                             Player player = Bukkit.getPlayer(args[1]);
                             if (player != null) {
-                                Material material = Material.matchMaterial(args[2]);
-                                if (material == null) {
-                                    sender.sendMessage(c("Invalid material: " + args[2]));
-                                    return true;
-                                }
-                                MaterialStorangeClass mat = ForMidspike.getmaterialStore().get(player.getUniqueId().toString());
-                                if (mat == null) {
-                                    sender.sendMessage(c("List does not exist for " + player.getName()));
-                                } else {
-                                    mat.removeMaterial(material);
-                                    ForMidspike.getmaterialStore().put(player.getUniqueId().toString(), mat);
-                                    sender.sendMessage(c(material.name() + " has been removed from " + player.getName()));
+                                if (PlayerMaterialClass.removeMaterial(player.getUniqueId(),args[2])){
+                                    sender.sendMessage(c(args[2].replace("minecraft:","").toUpperCase() + " has been removed from " + player.getName()));
                                 }
                             }
                         } else {return false;}
