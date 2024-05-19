@@ -1,6 +1,6 @@
 package com.formidspike.Listeners;
 
-import com.formidspike.ForMidspike;
+import com.formidspike.Commands.ManageList;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -12,10 +12,8 @@ import java.util.*;
 
 public class TabCompleteListner implements TabCompleter {
 
-    private ForMidspike plugin;
-    public TabCompleteListner(ForMidspike plugin){
-        this.plugin = plugin;
-    }
+
+    public TabCompleteListner(){}
 
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
@@ -23,7 +21,6 @@ public class TabCompleteListner implements TabCompleter {
         List<String> completions = new ArrayList<>();
 
         if (args.length == 1) {
-            // Tab complete player names if the first argument is empty
             String input = args[0].toLowerCase();
             if ("add".startsWith(input)) {
                 completions.add("Add");
@@ -44,7 +41,7 @@ public class TabCompleteListner implements TabCompleter {
             }
         } else if (args.length == 3) {
             final String arg = args[2];
-            final List<String> materials = plugin.getManageList().getMaterials();
+            final List<String> materials = ManageList.getMaterials();
 
             final int size = materials.size();
             int i = Collections.binarySearch(materials, arg, String.CASE_INSENSITIVE_ORDER);

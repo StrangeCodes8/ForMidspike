@@ -19,6 +19,9 @@ public class MaterialStorangeClass {
     }
 
     public List<Material> getMaterials() {
+        if (materials == null){
+            throw new RuntimeException("There are no materials in the list");
+        }
         return materials;
     }
 
@@ -31,7 +34,7 @@ public class MaterialStorangeClass {
     }
 
     public boolean removeMaterial(Material material){
-        if (materials.contains(material)) {
+        if (!materials.contains(material)) {
             throw new RuntimeException("Materrial is not currently in the list");
         } else {
             materials.remove(material);

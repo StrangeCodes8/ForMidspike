@@ -19,11 +19,8 @@ import java.util.stream.Collectors;
 
 public class ManageList implements CommandExecutor {
 
-    private ForMidspike plugin;
-    public ManageList(ForMidspike plugin){
-        this.plugin = plugin;
-    }
-    public List<String> getMaterials(){return materials;}
+    public ManageList(){}
+    public static List<String> getMaterials(){return materials;}
     private static List<String> materials;
     static {
         ArrayList<String> materialList = Arrays.stream(Material.values()).map(Enum::name).sorted().collect(Collectors.toCollection(ArrayList::new));
@@ -43,44 +40,69 @@ public class ManageList implements CommandExecutor {
             switch (args[0].toLowerCase()) {
                 case "add":
                     try {
-                        Player player = Bukkit.getPlayer(args[1]);
-                        Material material = Material.matchMaterial(args[2]);
-                        if (material == null) {sender.sendMessage(c("Invalid material: " + args[2])); return true;}
-                        MaterialStorangeClass mat = plugin.getmaterialStore().get(player.getUniqueId().toString());
-                        if (mat == null){mat = new MaterialStorangeClass();}
-                        mat.addMaterial(material);
-                        mat.setPLayer(player);
-                        plugin.getmaterialStore().put(player.getUniqueId().toString(),mat);
-                        sender.sendMessage(c(material.name() + " has been added to " + player.getName() + "'s list"));
+                        if (args.length == 3) {
+                            Player player = Bukkit.getPlayer(args[1]);
+                            if (player != null) {
+                                Material material = Material.matchMaterial(args[2]);
+                                if (material == null) {
+                                    sender.sendMessage(c("Invalid material: " + args[2]));
+                                    return true;
+                                }
+                                MaterialStorangeClass mat = ForMidspike.getmaterialStore().get(player.getUniqueId().toString());
+                                if (mat == null) {
+                                    mat = new MaterialStorangeClass();
+                                }
+                                mat.addMaterial(material);
+                                mat.setPLayer(player);
+                                ForMidspike.getmaterialStore().put(player.getUniqueId().toString(), mat);
+                                sender.sendMessage(c(material.name() + " has been added to " + player.getName() + "'s list"));
+                            }
+                        } else {return false;}
                     } catch (RuntimeException e){
                         sender.sendMessage(c(e.getMessage()));
+                        return false;
                     }
                     return true;
                 case "get":
                     try {
-                        Player player = Bukkit.getPlayer(args[1]);
-                        List<Material> mat = getMaterialList(plugin.getmaterialStore().get(player.getUniqueId().toString()));
-                        sender.sendMessage("Materialas on " + player.getName() + "'s list");
-                        for(Material m:mat){
-                            sender.sendMessage(c("   " + m.name()));
-                        }
+                        if (args.length == 2) {
+                            Player player = Bukkit.getPlayer(args[1]);
+                            if (player != null) {
+                                MaterialStorangeClass mat = ForMidspike.getmaterialStore().get(player.getUniqueId().toString());
+                                if (mat == null) {
+                                    sender.sendMessage(c("There is no materials list for " + player.getName()));
+                                } else {
+                                    sender.sendMessage(c("Materialas on " + player.getName() + "'s list"));
+                                    for (Material m : mat.getMaterials()) {
+                                        sender.sendMessage(c("   " + m.name()));
+                                    }
+                                }
+                            }
+                        } else {return false;}
                     } catch (RuntimeException e){
                         sender.sendMessage(c(e.getMessage()));
                     }
                     return true;
                 case "remove":
                     try {
-                        Player player = Bukkit.getPlayer(args[1]);
-                        Material material = Material.matchMaterial(args[2]);
-                        if (material == null) {sender.sendMessage(c("Invalid material: " + args[2])); return true;}
-                        MaterialStorangeClass mat = plugin.getmaterialStore().get(player.getUniqueId().toString());
-                        if (mat == null) {
-                            sender.sendMessage(c("List does not exist for " + player.getName()));
-                        } else {
-                            mat.removeMaterial(material);
-                            plugin.getmaterialStore().put(player.getUniqueId().toString(), mat);
-                            sender.sendMessage(c(material.name() + "has been removed from " + player.getName()));
-                        }
+                        if (args.length == 3) {
+                            Player player = Bukkit.getPlayer(args[1]);
+                            if (player != null) {
+                                Material material = Material.matchMaterial(args[2]);
+                                if (material == null) {
+                                    sender.sendMessage(c("Invalid material: " + args[2]));
+                                    return true;
+                                }
+                                MaterialStorangeClass mat = ForMidspike.getmaterialStore().get(player.getUniqueId().toString());
+                                if (mat == null) {
+                                    sender.sendMessage(c("List does not exist for " + player.getName()));
+                                } else {
+                                    mat.removeMaterial(material);
+                                    ForMidspike.getmaterialStore().put(player.getUniqueId().toString(), mat);
+                                    sender.sendMessage(c(material.name() + " has been removed from " + player.getName()));
+                                }
+                            }
+                        } else {return false;}
                     } catch (RuntimeException e){
                         sender.sendMessage(c(e.getMessage()));
                     }
@@ -90,10 +112,6 @@ public class ManageList implements CommandExecutor {
             }
         }
         return false;
-    }
-
-    private static List<Material> getMaterialList(MaterialStorangeClass materialStorangeClass){
-        return materialStorangeClass.getMaterials();
     }
     public Component c(String message){
         return Component.text(message);
