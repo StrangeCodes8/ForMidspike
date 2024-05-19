@@ -1,0 +1,11 @@
+<component name="ArtifactManager">
+  <artifact name="CompileJar">
+    <output-path>$PROJECT_DIR$/../../Server/debug/spigot/plugins</output-path>
+    <root id="root">
+      <element id="archive" name="ForMidspike.main.jar">
+        <element id="module-output" name="ForMidspike.main" />
+        <element id="file-copy" path="$PROJECT_DIR$/src/main/resources/plugin.yml" />
+      </element>
+    </root>
+  </artifact>
+</component>

@@ -1,0 +1,9 @@
+name: ForMidspike
+version: '0.1'
+main: com.formidspike.ForMidspike
+api-version: '1.20'
+
+commands:
+  materials:
+    description: Materials magement
+    usage: /Materials <add | get | remove > <playername> <material>
